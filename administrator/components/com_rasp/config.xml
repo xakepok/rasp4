@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset name="yarasp" label="COM_RASP_OPTIONS_YA_RASP" description="COM_RASP_OPTIONS_YA_RASP_DESC">
+		<field name="yarasp_api_key"
+			   label="COM_RASP_OPTIONS_YA_RASP_API_KEY"
+			   description="COM_RASP_OPTIONS_YA_RASP_API_KEY_DESC"
+			   type="text"
+			   required="true"
+			   autocomplete="off"
+			   component="com_rasp"
+			   section="component"
+		/>
+		<field name="count_points"
+			   label="COM_RASP_OPTIONS_YA_RASP_POINTS_COUNT_LABEL"
+			   description="COM_RASP_OPTIONS_YA_RASP_POINTS_COUNT_DESC"
+			   type="number"
+			   min="1"
+			   max="49"
+			   default="10"
+			   autocomplete="off"
+			   required="true"
+			   component="com_rasp"
+			   section="component"
+		/>
+		<field name="count_threads"
+			   label="COM_RASP_OPTIONS_YA_RASP_THEAD_COUNT_LABEL"
+			   description="COM_RASP_OPTIONS_YA_RASP_THEAD_COUNT_DESC"
+			   type="number"
+			   min="1"
+			   max="499"
+			   default="100"
+			   autocomplete="off"
+			   required="true"
+			   component="com_rasp"
+			   section="component"
+		/>
+	</fieldset>
+	<fieldset name="cron" label="COM_RASP_OPTIONS_CRON_LABEL" description="COM_RASP_OPTIONS_CRON_DESC">
+		<field name="cron_username"
+			   type="text"
+			   label="COM_RASP_OPTIONS_CRON_USERNAME_LABEL"
+			   description="COM_RASP_OPTIONS_CRON_USERNAME_DESC"
+			   required="true"
+			   component="com_rasp"
+			   section="component"
+		/>
+		<field name="cron_password"
+			   type="password"
+			   label="COM_RASP_OPTIONS_CRON_PASSWORD_LABEL"
+			   description="COM_RASP_OPTIONS_CRON_PASSWORD_DESC"
+			   required="true"
+			   component="com_rasp"
+			   section="component"
+		/>
+	</fieldset>
+	<fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL" description="JCONFIG_PERMISSIONS_DESC">
+		<field name="rules"
+			   type="rules"
+			   label="JCONFIG_PERMISSIONS_LABEL"
+			   filter="rules"
+			   component="com_rasp"
+			   section="component">
+		</field>
+	</fieldset>
+</config>
