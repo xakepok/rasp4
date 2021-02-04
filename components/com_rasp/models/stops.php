@@ -3,17 +3,18 @@ use Joomla\CMS\MVC\Model\ListModel;
 
 defined('_JEXEC') or die;
 
-class RaspModelNearest extends ListModel
+class RaspModelStops extends ListModel
 {
     public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                's.departure',
+                's.arrival, s.departure',
                 's.id',
             );
         }
         $this->station = JFactory::getApplication()->input->getInt('station', 9601703);
+        $this->threadID = JFactory::getApplication()->input->getInt('threadID', 0);
         parent::__construct($config);
     }
 
@@ -22,20 +23,18 @@ class RaspModelNearest extends ListModel
         $query = $this->_db->getQuery(true);
 
         /* Сортировка */
-        $orderCol = "s.departure";
+        $orderCol = "s.arrival, s.departure";
         $orderDirn = "ASC";
 
         //Ограничение длины списка
-        $limit = 5;
-
-        $yandex = $this->getStationCode($this->station);
+        $limit = 0;
 
         $query
-            ->select("t.number, s.departure, t.short_title, s.platform, t.id as threadID")
+            ->select("if(s.stop_time != 0, s.arrival, if(s.departure is not null, '', s.arrival)) as arrival, if(s.stop_time != 0, s.departure, if(s.arrival is not null, '', s.departure)) as departure, s.platform")
+            ->select("rs.title as station")
             ->from("#__rasp_stops s")
-            ->leftJoin("#__rasp_threads t on t.id = s.threadID")
-            ->where("s.yandexID = {$this->_db->q($yandex)}")
-            ->where("departure > current_timestamp()");
+            ->leftJoin("#__rw_stations rs on rs.yandex = s.yandexID")
+            ->where("s.threadID = {$this->_db->q($this->threadID)}");
 
         $query->order($this->_db->escape($orderCol . ' ' . $orderDirn));
         $this->setState('list.limit', $limit);
@@ -57,19 +56,16 @@ class RaspModelNearest extends ListModel
         $result = [];
         foreach ($items as $item) {
             $arr = [];
-            $arr['number'] = $item->number;
             $arr['platform'] = $item->platform;
-            $arr['arrival'] = (!empty($item->arrival)) ? JDate::getInstance($item->arrival)->format("H.i") : '';
-            $arr['departure'] = (!empty($item->departure)) ? JDate::getInstance($item->departure)->format("H.i") : '';
-            $arr['short_title'] = $item->short_title;
-            $arr['url_stops'] = "./stops.html?threadID={$item->threadID}";
-            $arr['link_thread'] = "<span class='loadStops' id='{$item->threadID}' data-toggle='modal' data-target='#rasp' style='cursor: pointer; text-decoration: underline; color: olivedrab;'>{$item->short_title}</span>";
+            $arr['arrival'] = (!empty($item->arrival)) ? JDate::getInstance($item->arrival)->format("H.i") : '-';
+            $arr['departure'] = (!empty($item->departure)) ? JDate::getInstance($item->departure)->format("H.i") : '-';
+            $arr['station'] = $item->station;
             $result[] = $arr;
         }
         return $result;
     }
 
-    protected function populateState($ordering = 's.departure', $direction = 'ASC')
+    protected function populateState($ordering = 's.arrival, s.departure', $direction = 'ASC')
     {
         parent::populateState($ordering, $direction);
     }
@@ -79,5 +75,5 @@ class RaspModelNearest extends ListModel
         return parent::getStoreId($id);
     }
 
-    private $station;
+    private $station, $threadID;
 }
